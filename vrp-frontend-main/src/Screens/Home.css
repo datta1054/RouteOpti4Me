@@ -1,0 +1,13 @@
+.upload_lottie:hover{
+    background-color: #ffffff;
+    transition: 0.5s;
+    border: 0px solid black;
+    transform: scale(1.4);
+    border-radius: 100px;
+    cursor: pointer;
+}
+
+.upload_lottie{
+    transition: 0.5s;
+    border-radius: 100px;
+}

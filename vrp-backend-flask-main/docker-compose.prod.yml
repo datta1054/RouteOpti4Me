@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  solver:
+    image: jonty99/vrp-backend-solver:latest
+    stop_grace_period: 3s
+    deploy:
+      # resources:
+      #   limits:
+      #     cpus: "${DOCKER_WEB_CPUS:-0}"
+      #     memory: "${DOCKER_WEB_MEMORY:-0}"
+      replicas: 2
+    ports:
+      - "8000"
+    # https://docs.docker.com/engine/swarm/ingress/#bypass-the-routing-mesh
+    # network_mode: "host"
+    environment:
+      - FLASK_DEBUG=false
+      - NODE_URL=http://node:3000
+      - SOLVER_URL=http://rproxy:4000
+    
+    # healthcheck:
+    #   test: "${DOCKER_WEB_HEALTHCHECK_TEST:-curl localhost:8000/up}"
+    #   interval: "60s"
+    #   timeout: "3s"
+    #   start_period: "5s"
+    #   retries: 3
+
+  rproxy:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - backend_net
+    depends_on:
+      # ignored in with stack deploy
+      - solver
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - "4000:4000"

@@ -1,0 +1,94 @@
+type Query {
+  problemInfos: [ProblemInfo]
+  problemInfo(id: ID!): ProblemInfo
+}
+
+type Mutation {
+  createProblemInfo(file: [Int]!): ProblemInfo
+  deleteProblemInfo(id: ID!): DeleteStats
+  updateProblemInfo(id: ID!, input: ProblemInfoInput): UpdateStats
+  updateProblemInfoSolution(id: ID!, input: RouteInput): UpdateStats
+}
+
+input ProblemInfoInput {
+  name: String
+  dimension: Int
+  vehicles: Int
+  optimalValue: Int
+  capacity: Int
+  depotNode: Int
+  demandType: [DemandTypeInput]
+  nodeData: [NodeInfoInput]
+}
+
+type ProblemInfo {
+  id: ID!
+  name: String
+  dimension: Int
+  vehicles: Int
+  optimalValue: Int
+  capacity: Int
+  depotNode: Int
+  demandType: [DemandType]
+  nodeData: [NodeInfo]
+  solution: Solution
+  file: [Int]
+}
+
+input NodeInfoInput {
+  node: Int
+  latitude: Float
+  longitude: Float
+  demand: Int
+  priority: Int
+}
+
+type NodeInfo {
+  node: Int
+  latitude: Float
+  longitude: Float
+  demand: Int
+  priority: Int
+}
+
+type Solution {
+  routes: [Route]
+  totalDistance: Int
+}
+
+input DemandTypeInput {
+  node: Int
+  items: [String]
+  quantity: [Int]
+}
+
+type DemandType {
+  node: Int
+  items: [String]
+  quantity: [Int]
+}
+
+input RouteInput {
+  tour: [Int]
+  tourDistance: Int
+}
+
+type Route {
+  id: ID!
+  tour: [Int]
+  tourDistance: Int
+}
+
+# https://stackoverflow.com/questions/65813060/which-value-should-be-returned-by-a-apollo-graphql-mutation
+type UpdateStats {
+  nModified: Int
+  nInserted: Int
+  n: Int
+  ok: Int
+}
+
+type DeleteStats {
+  n: Int
+  ok: Int
+  deletedCount: Int
+}
